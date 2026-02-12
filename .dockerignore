@@ -1,0 +1,35 @@
+# Docker ignore file - excludes files from being copied to Docker context
+# This improves build performance and reduces image size
+
+# Data directories
+data/
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Documentation
+*.md
+!README.md
+
+# Planning
+.planning/

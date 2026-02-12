@@ -54,12 +54,25 @@ class MassReconcileMatch(models.Model):
         selection=[
             ('exact', 'Exact Match'),
             ('partial', 'Partial Match'),
-            ('manual', 'Manual Match')
+            ('manual', 'Manual Match'),
+            ('internal_transfer', 'Internal Transfer'),
+            ('reconcile_model', 'Reconcile Model Rule'),
         ],
         string='Match Type',
         required=True,
         default='exact',
-        help='Type of match: exact (100% confidence), partial (probable), or manual (user-created)'
+        help='Type of match: exact (100% confidence), partial (probable), manual (user-created), internal_transfer (between bank accounts), or reconcile_model (matched via reconciliation rules)'
+    )
+    confidence_class = fields.Selection(
+        selection=[
+            ('safe', 'Safe'),
+            ('probable', 'Probable'),
+            ('doubtful', 'Doubtful'),
+        ],
+        string='Confidence Class',
+        compute='_compute_confidence_class',
+        store=True,
+        help='Classification based on match score: safe (100), probable (80-99), doubtful (<80)'
     )
     is_selected = fields.Boolean(
         string='Selected',
@@ -69,6 +82,13 @@ class MassReconcileMatch(models.Model):
 
     # Audit fields: create_uid, create_date, write_uid, write_date are automatically
     # provided by Odoo ORM via _log_access=True (which is the default)
+
+    @api.depends('match_score')
+    def _compute_confidence_class(self):
+        """Compute confidence class based on match score."""
+        scorer = self.env['mass.reconcile.scorer'].sudo()
+        for record in self:
+            record.confidence_class = scorer.classify_match(record.match_score)
 
     # SQL constraints
     _sql_constraints = [

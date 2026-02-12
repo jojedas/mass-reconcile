@@ -18,7 +18,10 @@
     'author': 'Your Company',
     'website': 'https://www.yourcompany.com',
     'depends': ['account', 'mail'],
-    'data': [],
+    'data': [
+        'security/ir.model.access.csv',
+        'security/mass_reconcile_security.xml',
+    ],
     'license': 'LGPL-3',
     'installable': True,
     'application': True,

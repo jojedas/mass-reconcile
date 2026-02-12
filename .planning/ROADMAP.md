@@ -48,10 +48,11 @@ Plans:
   6. System uses float_compare for monetary amounts (no rounding errors)
   7. System validates moves are not already reconciled before proposing
   8. System integrates with account.reconcile.model for recurring expenses
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- TBD (to be created during plan-phase)
+- [ ] 02-01-PLAN.md — Core matching engine + confidence scorer (TDD: candidate search, weighted scoring, internal transfer detection)
+- [ ] 02-02-PLAN.md — Batch orchestration wiring + reconcile model integration (connect engine to batch flow, account.reconcile.model support)
 
 ### Phase 3: Batch Processing & State Management
 **Goal**: Process reconciliation in 80-line chunks with progress tracking and state management
@@ -97,6 +98,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation Models & Data Layer | 2/2 | Complete | 2026-02-12 |
-| 2. Matching Engine & Auto-Reconciliation | 0/TBD | Not started | - |
+| 2. Matching Engine & Auto-Reconciliation | 0/2 | Planned | - |
 | 3. Batch Processing & State Management | 0/TBD | Not started | - |
 | 4. Manual Review Interface | 0/TBD | Not started | - |

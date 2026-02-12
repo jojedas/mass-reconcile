@@ -106,17 +106,56 @@ Explícitamente excluido. Documentado para prevenir scope creep.
 
 ## Traceability
 
-Qué fases cubren qué requirements. Se actualizará durante creación de roadmap.
+Qué fases cubren qué requirements. Actualizado durante creación de roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (Pending roadmap creation) | - | - |
+| DATA-01 | Phase 1 | Pending |
+| DATA-02 | Phase 1 | Pending |
+| DATA-03 | Phase 1 | Pending |
+| DATA-04 | Phase 1 | Pending |
+| DATA-05 | Phase 1 | Pending |
+| DATA-06 | Phase 1 | Pending |
+| DATA-07 | Phase 1 | Pending |
+| MATCH-01 | Phase 2 | Pending |
+| MATCH-02 | Phase 2 | Pending |
+| MATCH-03 | Phase 2 | Pending |
+| MATCH-04 | Phase 2 | Pending |
+| MATCH-05 | Phase 2 | Pending |
+| MATCH-06 | Phase 2 | Pending |
+| MATCH-07 | Phase 2 | Pending |
+| MATCH-08 | Phase 2 | Pending |
+| MATCH-09 | Phase 2 | Pending |
+| MATCH-10 | Phase 2 | Pending |
+| MATCH-11 | Phase 2 | Pending |
+| MATCH-12 | Phase 2 | Pending |
+| MATCH-13 | Phase 2 | Pending |
+| BATCH-01 | Phase 3 | Pending |
+| BATCH-02 | Phase 3 | Pending |
+| BATCH-03 | Phase 3 | Pending |
+| BATCH-04 | Phase 3 | Pending |
+| BATCH-05 | Phase 3 | Pending |
+| BATCH-06 | Phase 3 | Pending |
+| BATCH-07 | Phase 3 | Pending |
+| REVIEW-01 | Phase 4 | Pending |
+| REVIEW-02 | Phase 4 | Pending |
+| REVIEW-03 | Phase 4 | Pending |
+| REVIEW-04 | Phase 4 | Pending |
+| REVIEW-05 | Phase 4 | Pending |
+| REVIEW-06 | Phase 4 | Pending |
+| REVIEW-07 | Phase 4 | Pending |
+| REVIEW-08 | Phase 4 | Pending |
+| UI-01 | Phase 4 | Pending |
+| UI-02 | Phase 4 | Pending |
+| UI-03 | Phase 4 | Pending |
+| UI-04 | Phase 4 | Pending |
+| UI-05 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 33 total
-- Mapped to phases: 0
-- Unmapped: 33 ⚠️
+- Mapped to phases: 33
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-02-12*
-*Last updated: 2026-02-12 after initial definition*
+*Last updated: 2026-02-12 after roadmap creation*

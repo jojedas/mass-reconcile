@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  # PostgreSQL 15 Database Service
+  # Stores all Odoo data including business data and metadata
+  db:
+    image: postgres:15
+    container_name: odoo_db
+    environment:
+      # PostgreSQL superuser password
+      - POSTGRES_PASSWORD=jumo
+      # Database user for Odoo
+      - POSTGRES_USER=odoo
+      # Default database name
+      - POSTGRES_DB=postgres
+    volumes:
+      # Persist database data on host machine
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      # Expose PostgreSQL port (optional, for direct DB access)
+      - "5432:5432"
+    networks:
+      - odoo_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Odoo 18.0 Community Service
+  # Main application server
+  odoo:
+    image: odoo:18.0
+    container_name: odoo_app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Database connection settings
+      - HOST=db
+      - USER=odoo
+      - PASSWORD=jumo
+      # Allow database management operations
+      - POSTGRES_PASSWORD=jumo
+    volumes:
+      # Odoo configuration file
+      - ./config/odoo.conf:/etc/odoo/odoo.conf
+      # Persist Odoo data (filestore, sessions, etc.)
+      - ./data/odoo:/var/lib/odoo
+      # Custom addons directory for OCA modules
+      - ./addons/oca:/mnt/oca-addons
+      # Custom addons directory for your own modules (current project)
+      - ./:/mnt/custom-addons
+      # Extra addons directory (if needed)
+      - ./addons/extra:/mnt/extra-addons
+    ports:
+      # Web interface port
+      - "8069:8069"
+      # XML-RPC port (for external integrations)
+      - "8071:8071"
+      # Long polling port (for live chat and notifications)
+      - "8072:8072"
+    networks:
+      - odoo_network
+    restart: unless-stopped
+    command: >
+      odoo
+      --config=/etc/odoo/odoo.conf
+      --database=jumo
+      --db_host=db
+      --db_user=odoo
+      --db_password=jumo
+      --db-filter=^jumo$$
+      --without-demo=all
+      --load=base,web
+
+networks:
+  odoo_network:
+    driver: bridge
+
+volumes:
+  # Named volumes for better Docker volume management (optional)
+  postgres_data:
+  odoo_data:

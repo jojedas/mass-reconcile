@@ -177,7 +177,120 @@ class MassReconcileBatch(models.Model):
             raise ValidationError(
                 "Cannot start matching without statement lines"
             )
+
+        # Set state to matching
         self.write({'state': 'matching'})
+
+        # Delete any existing match proposals (re-matching scenario)
+        self.match_ids.unlink()
+
+        # Reset all statement line match_states to unmatched
+        self.statement_line_ids.write({'match_state': 'unmatched'})
+
+        # Get the engine
+        engine = self.env['mass.reconcile.engine'].sudo()
+
+        # Track matching statistics
+        safe_count = 0
+        probable_count = 0
+        doubtful_count = 0
+        unmatched_count = 0
+
+        # Process each statement line
+        for line in self.statement_line_ids:
+            # Find regular candidates
+            candidates = engine.find_candidates(line)
+
+            # Also check reconcile models
+            model_candidates = engine.apply_reconcile_models(line)
+
+            # Combine all candidates
+            all_candidates = candidates + model_candidates
+
+            if all_candidates:
+                # Create match proposals
+                self._create_match_proposals(line, all_candidates)
+
+                # Count by best match classification
+                best_score = max(c['score'] for c in all_candidates)
+                if best_score == 100:
+                    safe_count += 1
+                elif best_score >= 80:
+                    probable_count += 1
+                else:
+                    doubtful_count += 1
+            else:
+                unmatched_count += 1
+
+        # Transition to review state
+        self.write({'state': 'review'})
+
+        # Post summary message to chatter
+        summary_message = (
+            f"<p><strong>Matching completed:</strong></p>"
+            f"<ul>"
+            f"<li>Total lines processed: {self.line_count}</li>"
+            f"<li>Safe matches (100%): {safe_count}</li>"
+            f"<li>Probable matches (80-99%): {probable_count}</li>"
+            f"<li>Doubtful matches (<80%): {doubtful_count}</li>"
+            f"<li>Unmatched: {unmatched_count}</li>"
+            f"</ul>"
+        )
+        self.message_post(body=summary_message, subject='Matching Complete')
+
+    def _create_match_proposals(self, line, candidates):
+        """
+        Create match proposals for a statement line.
+
+        Args:
+            line: account.bank.statement.line record
+            candidates: list of candidate dicts [{move_line_id, score, match_type, reason}]
+        """
+        self.ensure_one()
+
+        # Prepare values for batch create
+        vals_list = []
+        best_score = 0
+        best_move = None
+
+        for candidate in candidates:
+            move_line = self.env['account.move.line'].browse(candidate['move_line_id'])
+
+            # Determine match_type based on score
+            if candidate['score'] == 100:
+                match_type = 'exact'
+            elif candidate.get('match_type') == 'internal_transfer':
+                match_type = 'internal_transfer'
+            elif candidate.get('match_type') == 'reconcile_model':
+                match_type = 'reconcile_model'
+            else:
+                match_type = 'partial'
+
+            vals_list.append({
+                'batch_id': self.id,
+                'statement_line_id': line.id,
+                'suggested_move_id': move_line.move_id.id,
+                'suggested_move_line_id': move_line.id,
+                'match_score': candidate['score'],
+                'match_type': match_type,
+                'match_reason': candidate['reason'],
+            })
+
+            # Track best match
+            if candidate['score'] > best_score:
+                best_score = candidate['score']
+                best_move = move_line.move_id
+
+        # Batch create all proposals
+        if vals_list:
+            self.env['mass.reconcile.match'].create(vals_list)
+
+            # Update statement line with best match
+            line.write({
+                'match_score': best_score,
+                'suggested_move_id': best_move.id if best_move else False,
+                'match_state': 'matched',
+            })
 
     def action_move_to_review(self):
         """Move batch to review state."""

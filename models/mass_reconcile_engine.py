@@ -68,6 +68,111 @@ class MassReconcileEngine(models.AbstractModel):
 
         return candidates
 
+    def apply_reconcile_models(self, statement_line):
+        """
+        Apply account.reconcile.model rules for invoice matching.
+
+        Args:
+            statement_line: account.bank.statement.line record
+
+        Returns:
+            list: List of candidate dicts [{move_line_id, score, match_type, reason}]
+        """
+        self.ensure_one() if self.ids else None
+
+        candidates = []
+
+        try:
+            # Search for applicable reconciliation models (invoice_matching only)
+            models = self.env['account.reconcile.model'].search([
+                ('rule_type', '=', 'invoice_matching'),
+                ('company_id', '=', statement_line.company_id.id),
+            ])
+
+            if not models:
+                return candidates
+
+            # For each model, check if it matches the statement line
+            for model in models:
+                matching_lines = self._apply_single_reconcile_model(statement_line, model)
+                candidates.extend(matching_lines)
+
+        except Exception:
+            # Gracefully handle missing OCA module or other errors
+            return []
+
+        return candidates
+
+    def _apply_single_reconcile_model(self, statement_line, reconcile_model):
+        """
+        Apply a single reconcile model to a statement line.
+
+        Args:
+            statement_line: account.bank.statement.line record
+            reconcile_model: account.reconcile.model record
+
+        Returns:
+            list: List of candidate dicts
+        """
+        candidates = []
+
+        # Check if model matches the statement line
+        matches_partner = True
+        matches_label = True
+        matches_amount = True
+
+        # Partner matching
+        if reconcile_model.match_partner:
+            if not statement_line.partner_id:
+                matches_partner = False
+            elif reconcile_model.partner_id and reconcile_model.partner_id != statement_line.partner_id:
+                matches_partner = False
+
+        # Label matching
+        if reconcile_model.match_label:
+            if not statement_line.payment_ref:
+                matches_label = False
+            else:
+                # Simple substring matching
+                st_ref = statement_line.payment_ref.lower()
+                model_label = (reconcile_model.match_label or '').lower()
+                if model_label and model_label not in st_ref:
+                    matches_label = False
+
+        # Amount matching (with tolerance)
+        if reconcile_model.match_amount:
+            if reconcile_model.match_amount_min and abs(statement_line.amount) < reconcile_model.match_amount_min:
+                matches_amount = False
+            if reconcile_model.match_amount_max and abs(statement_line.amount) > reconcile_model.match_amount_max:
+                matches_amount = False
+
+        # If all criteria match, search for move lines
+        if matches_partner and matches_label and matches_amount:
+            # Build domain for move line search based on model configuration
+            domain = self._build_base_domain(statement_line)
+
+            # Search for matching move lines
+            MoveLine = self.env['account.move.line']
+            matching_move_lines = MoveLine.search(domain, limit=10)
+
+            # Score each matching move line
+            scorer = self.env['mass.reconcile.scorer'].sudo()
+            for move_line in matching_move_lines:
+                score = 90.0  # Reconcile model matches get probable score
+
+                reason = f"Reconcile model: {reconcile_model.name}"
+                if reconcile_model.match_label:
+                    reason += f" | Label: {reconcile_model.match_label}"
+
+                candidates.append({
+                    'move_line_id': move_line.id,
+                    'score': score,
+                    'match_type': 'reconcile_model',
+                    'reason': reason,
+                })
+
+        return candidates
+
     def _search_amount_candidates(self, statement_line):
         """
         Search for move lines matching statement line amount.

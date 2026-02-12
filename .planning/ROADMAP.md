@@ -65,10 +65,11 @@ Plans:
   4. System displays matching statistics (% automatic, % manual, % unmatched)
   5. All match proposals are stored in batch for audit trail
   6. System prevents concurrent reconciliation conflicts with proper locking
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- TBD (to be created during plan-phase)
+- [ ] 03-01-PLAN.md — Line loading with 80-line limit + date range selection, SELECT FOR UPDATE locking, state validation guards, reset cleanup
+- [ ] 03-02-PLAN.md — Matching statistics computed fields (_read_group) + progress tracking text fields
 
 ### Phase 4: Manual Review Interface
 **Goal**: User interface for reviewing, approving, and correcting match proposals
@@ -99,5 +100,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. Foundation Models & Data Layer | 2/2 | Complete | 2026-02-12 |
 | 2. Matching Engine & Auto-Reconciliation | 2/2 | Complete | 2026-02-12 |
-| 3. Batch Processing & State Management | 0/TBD | Not started | - |
+| 3. Batch Processing & State Management | 0/2 | Not started | - |
 | 4. Manual Review Interface | 0/TBD | Not started | - |

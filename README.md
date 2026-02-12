@@ -41,6 +41,9 @@ See [QUICKSTART.md](QUICKSTART.md) for detailed quick start guide.
 
 - **[QUICKSTART.md](QUICKSTART.md)** - Get running in 5 minutes
 - **[SETUP.md](SETUP.md)** - Complete setup and usage documentation
+- **[TUTORIAL.md](TUTORIAL.md)** - Comprehensive Spanish tutorial (installation, usage, development, troubleshooting)
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
+- **[CHANGELOG.md](CHANGELOG.md)** - Version history and release notes
 
 ### Command Reference
 
@@ -197,10 +200,16 @@ docker-compose run --rm odoo odoo \
 
 ## Contributing
 
-1. Create a feature branch
-2. Make your changes
-3. Test thoroughly
-4. Submit a pull request
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+Quick start:
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/awesome-feature`
+3. Make your changes and add tests
+4. Commit using [Conventional Commits](https://www.conventionalcommits.org/)
+5. Push and open a Pull Request
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for code style, testing requirements, and PR workflow.
 
 ## License
 
@@ -225,12 +234,27 @@ For issues and questions:
 
 ## Changelog
 
-### Version 1.0.0 (Initial Release)
+See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
-- Initial module structure
-- Docker development environment setup
-- OCA integration
-- Basic reconciliation models
+### Version 1.0.0 (2024-02-12) - Initial Release
+
+**Core Features:**
+- ✅ Batch processing with configurable chunk size
+- ✅ Intelligent matching engine (exact, partner, invoice types)
+- ✅ Confidence scoring with 3-tier classification (safe/probable/doubtful)
+- ✅ Dual mode: auto-reconcile or manual review
+- ✅ OCA account-reconcile integration
+- ✅ Comprehensive test suite
+- ✅ Complete Docker development environment
+- ✅ Full documentation in English and Spanish
+
+**Technical Highlights:**
+- 4 models (batch, match, engine, scorer)
+- Security groups and access control
+- Performance optimized with batch operations
+- Deterministic matching for debuggability
+
+See [CHANGELOG.md](CHANGELOG.md) for complete details, technical decisions, and planned features.
 
 ---
 

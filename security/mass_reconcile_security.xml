@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Multi-company record rules -->
+    <record id="mass_reconcile_batch_company_rule" model="ir.rule">
+        <field name="name">Mass Reconcile Batch: multi-company</field>
+        <field name="model_id" ref="model_mass_reconcile_batch"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="mass_reconcile_match_company_rule" model="ir.rule">
+        <field name="name">Mass Reconcile Match: multi-company</field>
+        <field name="model_id" ref="model_mass_reconcile_match"/>
+        <field name="domain_force">[('batch_id.company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mass_reconcile_batch_user,access_mass_reconcile_batch_user,model_mass_reconcile_batch,account.group_account_user,1,1,1,0
+access_mass_reconcile_batch_manager,access_mass_reconcile_batch_manager,model_mass_reconcile_batch,account.group_account_manager,1,1,1,1
+access_mass_reconcile_match_user,access_mass_reconcile_match_user,model_mass_reconcile_match,account.group_account_user,1,1,1,0
+access_mass_reconcile_match_manager,access_mass_reconcile_match_manager,model_mass_reconcile_match,account.group_account_manager,1,1,1,1

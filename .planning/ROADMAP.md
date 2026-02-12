@@ -29,10 +29,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Match proposals are stored with audit trail (who suggested, when, what score)
   4. Security rules prevent unauthorized access to reconciliation data
   5. ORM queries use proper prefetching and batch patterns (no N+1 query degradation)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- TBD (to be created during plan-phase)
+- [ ] 01-01-PLAN.md — Module scaffold + data models (batch, statement line extension, match proposal)
+- [ ] 01-02-PLAN.md — Security layer (access rights CSV, record rules XML, manifest update)
 
 ### Phase 2: Matching Engine & Auto-Reconciliation
 **Goal**: Core matching algorithm that proposes reconciliation candidates with confidence scoring
@@ -95,7 +96,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation Models & Data Layer | 0/TBD | Not started | - |
+| 1. Foundation Models & Data Layer | 0/2 | Planned | - |
 | 2. Matching Engine & Auto-Reconciliation | 0/TBD | Not started | - |
 | 3. Batch Processing & State Management | 0/TBD | Not started | - |
 | 4. Manual Review Interface | 0/TBD | Not started | - |
